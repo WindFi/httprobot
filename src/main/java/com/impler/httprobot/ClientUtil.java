@@ -42,7 +42,7 @@ public abstract class ClientUtil {
         HttpConnectionParams.setSoTimeout(httpParams, READ_TIMEOUT);  
   
         SchemeRegistry registry = new SchemeRegistry();  
-        registry.register(new Scheme("http",  80, PlainSocketFactory.getSocketFactory() ));  
+        registry.register(new Scheme("http",  80, PlainSocketFactory.getSocketFactory() ));
         registry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory() ));  
   
         connectionManager = new PoolingClientConnectionManager(registry);  
