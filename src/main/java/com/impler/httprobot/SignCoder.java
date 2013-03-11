@@ -21,7 +21,7 @@ public class SignCoder {
 	 * @author  Invalid
 	 * @date 2012-3-15 上午11:52:18
 	 */
-	public static boolean validateSign(String md5, Map<String,String[]> params, String key){
+	public static boolean validateSign(String md5, Map<String,Object> params, String key){
 		return makeSign(params, key).equals(md5);
 	}
 	
@@ -33,11 +33,11 @@ public class SignCoder {
 	 * @author  Invalid
 	 * @date 2012-3-15 上午11:49:23
 	 */
-	public static String makeSign(Map<String,String[]> params, String key){
+	public static String makeSign(Map<String,Object> params, String key){
 		if(params instanceof TreeMap)
-			return makeSign((TreeMap<String,String[]>)params,key);
+			return makeSign((TreeMap<String,Object>)params,key);
 		else
-			return makeSign(new TreeMap<String,String[]>(params),key);
+			return makeSign(new TreeMap<String,Object>(params),key);
 	}
 	
 	/**
@@ -48,14 +48,22 @@ public class SignCoder {
 	 * @author  Invalid
 	 * @date 2012-3-15 上午11:49:36
 	 */
-	public static String makeSign(TreeMap<String,String[]> params, String key){
+	public static String makeSign(TreeMap<String,Object> params, String key){
 		StringBuilder sb = new StringBuilder();
-		for(Entry<String,String[]> entry : params.entrySet()){
-			if(entry.getValue()==null)continue;
-			if(entry.getValue().length==1)
-				sb.append(entry.getKey()).append(entry.getValue()[0]);
-			else
-				addValues(sb, entry.getKey(), entry.getValue());
+		Object val = null;
+		for(Entry<String,Object> entry : params.entrySet()){
+			val = entry.getValue();
+			if(val==null)continue;
+			if(val.getClass().isArray()){
+				Object[] vals = (Object[]) val;
+				if(vals.length==1){
+					sb.append(entry.getKey()).append(vals[0]);
+				}else{
+					addValues(sb, entry.getKey(), vals);
+				}
+			}else{
+				sb.append(entry.getKey()).append(val);
+			}
 		}
 		sb.append(key);
 		return KeyedMD5.getMd5Utf8(sb.toString(), "");
@@ -69,9 +77,9 @@ public class SignCoder {
 	 * @author  Invalid
 	 * @date 2012-3-15 上午11:49:50
 	 */
-	private static void addValues(StringBuilder sb, String name, String[] values){
+	private static void addValues(StringBuilder sb, String name, Object[] values){
 		Arrays.sort(values);
-		for(String val : values){
+		for(Object val : values){
 			sb.append(name).append(val);
 		}
 	}

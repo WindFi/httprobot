@@ -28,7 +28,7 @@ public class KeyedMD5 {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return "";
     }
 
     private static byte[] getKeyedDigest(byte[] buffer, byte[] key) {
@@ -38,7 +38,7 @@ public class KeyedMD5 {
             return md5.digest(key);
         } catch (NoSuchAlgorithmException e) {
         }
-        return null;
+        return new byte[0];
     }
 
 }
